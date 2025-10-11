@@ -5,7 +5,7 @@ const path = require("path");
 const ownerInfo = {
   name: "Israfil ThronHalo",
   facebook: "https://www.facebook.com/share/1DHWknjtZd/",
-  telegram: "@saimx69x",
+  instagram: "israfil_thornhalo"
   supportGroup: "https://m.me/j/Abb6no6wDytyI55v/"
 };
 
@@ -27,7 +27,7 @@ module.exports = {
     const isBotAdded = addedUsers.some(u => u.userFbId === botID);
     if (!isBotAdded) return;
 
-    const nickNameBot = global.GoatBot.config.nickNameBot || "Sakura Bot";
+    const nickNameBot = global.GoatBot.config.nickNameBot || "ThronHalo Bot";
     const prefix = global.utils.getPrefix(threadID);
     const BOT_UID = botID; 
 
