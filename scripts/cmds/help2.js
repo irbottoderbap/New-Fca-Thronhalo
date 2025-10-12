@@ -38,7 +38,7 @@ function roleTextToString(role) {
 
 module.exports = {
   config: {
-    name: "help",
+    name: "help2",
     version: "2.0",
     author: "Israfil ThronHalo",
     role: 0,
