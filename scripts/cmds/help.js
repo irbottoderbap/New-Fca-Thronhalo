@@ -40,7 +40,7 @@ module.exports = {
   config: {
     name: "help",
     version: "2.0",
-    author: "Saimx69x",
+    author: "Israfil ThronHalo",
     role: 0,
     shortDescription: { en: "Show command list or help info" },
     longDescription: { en: "Show full list or specific command details." },
@@ -56,7 +56,7 @@ module.exports = {
 
     await ensureImageCached();
 
-    const header = `╔═════ ❖ ≡ ❖ ═════╗\n   𝙎𝘼𝙆𝙐𝙍𝘼 𝑯𝙀𝙇𝙋 𝙈𝙀𝙉𝙐\n╚═════ ❖ ≡ ❖ ═════╝\n`;
+    const header = `╔═════ ❖ ≡ ❖ ═════╗\n   Thronhalo 𝑯𝙀𝙇𝙋 𝙈𝙀𝙉𝙐\n╚═════ ❖ ≡ ❖ ═════╝\n`;
 
     // /help -c <category>
     if (argLower[0] === "-c" && args.length > 1) {
@@ -122,8 +122,8 @@ Total: ${matchedCmds.length} command(s)`;
       msg += `\n┍━━━[ INFO ]━━━•◇
 ┋❍ TOTAL CMDS : ${commands.size}
 ┋❍ PREFIX      : ${prefix}
-┋❍ CREATOR     : Ew'r Saim
-┋❍ FACEBOOK    : https://www.facebook.com/ye.bi.nobi.tai.244493
+┋❍ CREATOR     : Israfil ThronHalo 
+┋❍ INSTAGRAM   : israfil_thronhalo
 ┕━━━━━━━━━━━━•◇`;
 
       const reply = await message.reply({
