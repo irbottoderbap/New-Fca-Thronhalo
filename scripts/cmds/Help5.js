@@ -20,7 +20,7 @@ const categoryEmojis = {
 
 module.exports = {
   config: {
-    name: "help",
+    name: "help5",
     version: "2.0",
     author: "ISRAFIL THRONHALO",
     countDown: 5,
