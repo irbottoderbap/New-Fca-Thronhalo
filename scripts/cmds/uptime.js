@@ -4,96 +4,83 @@ const path = require("path");
 
 module.exports = {
   config: {
-    name: "uptime",
-    aliases: ["up", "upt"],
-    version: "2.0",
-    author: "Saimx69x",
+    name: "uptime2",
+    aliases: ["ut", "timeup"],
+    version: "1.0",
+    author: "Israfil",
     role: 0,
-    usePrefix: true,
-    shortDescription: {
-      en: "Check bot uptime with ping and image"
-    },
-    longDescription: {
-      en: "Display how long the bot is running along with ping time and a custom image"
-    },
-    category: "system",
-    guide: {
-      en: "{pn} → check bot uptime with ping"
-    }
+    shortDescription: "Show bot uptime with custom background image",
+    longDescription: "Shows how long the bot has been running, with a premium styled image card using custom bg",
+    category: "tools",
+    guide: "{pn}"
   },
 
-  onStart() {
-    console.log("✅ Uptime command loaded.");
-  },
+  onStart: async function ({ api, event }) {
+    const uptime = process.uptime(); // seconds
+    const days = Math.floor(uptime / (60 * 60 * 24));
+    const hours = Math.floor((uptime % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((uptime % (60 * 60)) / 60);
+    const seconds = Math.floor(uptime % 60);
 
-  onChat: async function ({ event, message, args, commandName }) {
-    const prefix = global.GoatBot.config.prefix || "/";
-    const body = event.body?.trim() || "";
-    if (!body.startsWith(prefix + commandName) && !this.config.aliases.some(a => body.startsWith(prefix + a))) return;
+    const uptimeStr = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    const dateNow = new Date().toLocaleString("en-GB", { timeZone: "Asia/Dhaka" });
 
-    const imagePath = path.join(__dirname, "uptime_image.png");
+    const width = 800;
+    const height = 400;
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext("2d");
 
-    try {
-      const pingMsg = await message.reply("⚡ Checking ping...");
-      const start = Date.now();
-      await new Promise(res => setTimeout(res, 100));
-      const ping = Date.now() - start;
+    // Load background image
+    const bgImage = await loadImage("https://files.catbox.moe/b7xfaz.jpg");
+    ctx.drawImage(bgImage, 0, 0, width, height);
 
-      const uptime = Math.floor(process.uptime()); // in seconds
-      const days = Math.floor(uptime / (3600 * 24));
-      const hours = Math.floor((uptime % (3600 * 24)) / 3600);
-      const minutes = Math.floor((uptime % 3600) / 60);
-      const seconds = uptime % 60;
-      const upTimeStr = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    // Overlay semi-transparent gradient for readability
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, "rgba(0, 0, 0, 0.5)");
+    gradient.addColorStop(1, "rgba(0, 0, 0, 0.7)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
 
-      const canvas = createCanvas(1000, 500);
-      const ctx = canvas.getContext("2d");
+    // Outer neon border glow
+    ctx.strokeStyle = "#00FFFF";
+    ctx.lineWidth = 8;
+    ctx.shadowColor = "#00FFFF";
+    ctx.shadowBlur = 25;
+    ctx.strokeRect(10, 10, width - 20, height - 20);
 
-      const bgUrl = "https://i.imgur.com/b4rDlP9.png";
-      const background = await loadImage(bgUrl);
-      ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+    // Reset shadow for text
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = "transparent";
 
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 45px Arial";
-      ctx.textAlign = "left";
-      ctx.textBaseline = "middle";
-      ctx.shadowColor = "rgba(0,0,0,0.7)";
-      ctx.shadowOffsetX = 2;
-      ctx.shadowOffsetY = 2;
-      ctx.shadowBlur = 4;
+    // Uptime Text
+    ctx.fillStyle = "#00FFCC";
+    ctx.font = "bold 60px Sans";
+    ctx.textAlign = "center";
+    ctx.fillText("Bot Uptime", width / 2, 100);
 
-      ctx.fillText("🤖 BOT UPTIME", 60, 100);
-      ctx.fillText(`⏳ ${upTimeStr}`, 60, 200);
-      ctx.fillText(`⚡ Ping: ${ping}ms`, 60, 280);
-      ctx.fillText(`👤 Owner: Saimx69x`, 60, 360);
+    ctx.fillStyle = "#FFD700";
+    ctx.font = "bold 80px Sans";
+    ctx.fillText(uptimeStr, width / 2, 200);
 
-      const buffer = canvas.toBuffer("image/png");
-      fs.writeFileSync(imagePath, buffer);
+    // Date & Time
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "30px Sans";
+    ctx.fillText(`Date & Time: ${dateNow}`, width / 2, 280);
 
-      await message.unsend(pingMsg.messageID);
+    // Owner name
+    ctx.fillStyle = "#00FFFF";
+    ctx.font = "bold 28px Sans";
+    ctx.fillText("Israfil", width / 2, 340);
 
-      await message.reply({
-        body: `
-━━━━━━━━━━━━━━
-𝐁𝐎𝐓 𝐒𝐓𝐀𝐓𝐔𝐒 ✅
-╭─╼━━━━━━━━╾─╮
-│ 💤 Uptime : ${upTimeStr}
-│ ⚡ Ping   : ${ping}ms
-│ 👑 Owner  : Saimx69x
-╰─━━━━━━━━━╾─╯
-━━━━━━━━━━━━━━
-        `,
-        attachment: fs.createReadStream(imagePath)
-      });
+    // Save image
+    const filePath = path.join(__dirname, "uptime_card.png");
+    const buffer = canvas.toBuffer("image/png");
+    fs.writeFileSync(filePath, buffer);
 
-    } catch (err) {
-      console.error("❌ Error in uptime command:", err);
-      await message.reply(
-        "⚠️ Failed to generate uptime."
-      );
-    } finally {
-      
-      if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
-    }
+    // Send image
+    api.sendMessage({
+      body: "📊 Bot Uptime Status",
+      attachment: fs.createReadStream(filePath)
+    }, event.threadID, () => fs.unlinkSync(filePath));
   }
 };
