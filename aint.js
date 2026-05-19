@@ -33,7 +33,7 @@ const imageIndices = new Map();
 
 module.exports = {
   config: {
-    name: "help3",
+    name: "ain't",
     version: "2.0",
     author: "ISRAFIL THRONHALO",
     countDown: 5,
